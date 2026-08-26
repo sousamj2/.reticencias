@@ -1,0 +1,38 @@
+ #+title Setup for handling backup and auto save files.
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+ Mostly this information was retrieved from system crafters youtube.
+ 
+* No backup option (disable)
+#+begin_src emacs-lisp
+;; (setq make-backup-file nil)
+;; (setq auto-save-default nil)
+#+end_src
+* Backup files
+Place backup file in the "/temp" directory instead of placing next to the file (".").
+
+#+begin_src emacs-lisp
+  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+#+end_src
+
+* Auto save files
+Place auto save files (files edited and after you change the buffer without saving it).
+#+begin_src emacs-lisp
+  (make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+  (setq auto-save-list-file-prefix
+        (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+        auto-save-file-name-transforms
+        `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+#+end_src
+
+* Do not create lock files
+Actually, they are handy so I will leave them for now...
+#+begin_src emacs-lisp
+;  (setq create-lockfiles nil)
+#+end_src
+* Files created by packages
+Several packages create their own files to store variables ans states.
+Need to understand which packages have this. That or I can use
+(use-package no-littering)
