@@ -1,0 +1,69 @@
+ #+title Initialization for UI configurations of emacs
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+ This is where I will create the initial configuration of the emacs.
+
+* Basic UI configuration
+** Disable tool tips
+Don't remember what is this...
+#+begin_src emacs-lis
+(tooltip-mode -1)
+#+end_src
+** Save the cursor location
+Save location of the cursor when killing the buffer or closing emacs.
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+** Show line number on the left
+Add-hook to defines modes not to revert this.
+#+begin_src emacs-lisp
+  (dolist (mode
+  	 '(org-mode-hook
+  	   term-mode-hook
+  	   shell-mode-hook
+  	   treemacs-mode-hook
+  	   eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    #+end_src
+** Show column number
+#+begin_src emacs-lisp
+(column-number-mode)
+#+end_src
+** Add clock and used 24h system
+#+begin_src emacs-lisp
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+#+end_src
+** Using subWords
+#+begin_src emacs-lisp
+(global-subword-mode 1)
+#+end_src
+** No backup option (disable)
+This is to be replaced by a package that store these files away from the current directory.
+#+begin_src emacs-lisp
+;; (setq make-backup-file nil)
+;; (setq auto-save-default nil)
+#+end_src
+** Line highlight
+Works even better when using beam that double highlights the cursor line upon entering a buffer.
+#+begin_src emacs-lisp
+(when window-system (global-hl-line-mode t))
+#+end_src
+** Continuous scrolling
+At top and bottom it does not jump a "frame"
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 300)
+#+end_src
+** Parenthesis electrical
+#+begin_src emacs-lisp
+  (setq electric-pair-pairs '(
+			      (?\( . ?\) )
+			      (?\[ . ?\] )
+			      (?\{ . ?\} )
+			      (?\" . ?\" )
+			      ))
+  (modify-syntax-entry ?< ".")
+  (modify-syntax-entry ?> ".")
+  (electric-pair-mode t) 
+#+end_src

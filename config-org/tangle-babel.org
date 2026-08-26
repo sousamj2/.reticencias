@@ -1,0 +1,117 @@
+ #+title Setup to tangle org to el when saved and reload the config
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+ This is where I will create the initial configuration of the emacs.
+
+* Set variables
+*** Set org configuration directories
+#+begin_src emacs-lisp
+  ; points to the org sub directory in the --init-directory
+  (setq mj/config-org-directory
+        (expand-file-name "conf-org/" user-emacs-directory))
+#+end_src
+***  Set el configuration directories
+#+begin_src emacs-lisp
+  ; points to the el sub directory in the --init-directory
+  (setq mj/config-el-directory
+        (expand-file-name "conf-el/" user-emacs-directory))
+#+end_src
+* Declare functions
+*** Tangle function name automatic change
+#+begin_src emacs-lisp
+(defun mj/org-tangle-target ()
+  "Return the .el target corresponding to the current config Org file."
+  (concat
+   mj/config-el-directory
+   (file-name-sans-extension
+    (file-name-nondirectory buffer-file-name))
+   ".el"))
+#+end_src
+*** Function to see if the current file if a conf-org file
+#+begin_src emacs-lisp
+  (defun mj/config-org-file-p ()
+    "Return not-nil if the current buffer is one from my conf-org files."
+    (and buffer-file-name
+         (string-prefix-p
+  	mj/config-org-directory
+  	(file-truename buffer-file-name))
+         (string-equal
+  	(file-name-extension buffer-file-name) "org")))
+
+  ;; function file-name-extension return the extension of the buffer-file-name
+  ;; function file-truename return the string of the buffer-file-name
+  ;; mj/config-org-directory return the org-directory if function file-truename return inside folder
+  ;; string-prefix-p returns t if the first argument is a prefix of the second
+  ;; function string-equal return t if both strings are the same
+  ;; function and return t if buffer-file-name, mj/config-org-directory and string-equal all return t
+  ;; function mj/config-org-file-p return the result from and function
+#+end_src
+*** Function to tangle (save to the el counterpart) the org file.
+#+begin_src emacs-lisp
+  (defun mj/org-babel-tangle-config ()
+    "Tangle the current config Org file after saving it."
+    (when (mj/config-org-file-p)
+      (org-babel-tangle nil
+  		      (mj/org-tangle-target)
+  		      "emacs-lisp")))
+  ; evaluates the function mj/config-org-file-p and if t, evaluates org-babel-tangle that creates the file describes in :tangle
+
+
+  ;; (org-babel-tangle FILE TARGET LANG)
+  ;; FILE   = nil → current buffer
+  ;; TARGET = conf-el/foo.el
+  ;; LANG   = emacs-lisp
+#+end_src
+*** Function that will reload the configuration
+#+begin_src emacs-lisp
+  (defun mj/config-reload ()
+    (interactive)
+    (let ((early-el (expand-file-name "early-init.el"
+  				    user-emacs-directory))
+  	(init-el  (expand-file-name "init.el"
+  				    user-emacs-directory)))
+      (when (file-exists-p early-el)
+        (load-file early-el))
+      (when (file-exists-p init-el)
+        (load-file init-el))))
+  (with-eval-after-load 'org
+    (bind-key "C-c r" #'mj/config-reload))
+#+end_src
+* Add hook for org-mode
+Execute my org-babel-tangle when the file is the a conf-org-file.
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook
+          (lambda ()
+            (when (mj/config-org-file-p)
+              (add-hook 'after-save-hook
+                        #'mj/org-babel-tangle-config
+                        nil
+                        t))))
+
+;; (add-hook HOOK FUNCTION &optional DEPTH LOCAL)
+;; HOOK is the hook name:
+;; Whenever this happens (start org-mode, after saving the file), execute the
+;; FUNCTION that needs to be run with a
+;; DEPTH priority in the list of functions running the hook and only run in the
+;; LOCAL (current) buffer if t or globally if nil.
+;; DEPTH and LOCAL are &optional parameters in the function with the default value of nil.
+;; In general all &optional parameters have a nil value but can be explicitly set inside the function:
+;; (setq b (or b 42))
+;; Sets the value to either the value provided in the argument if not nil or to 42.
+
+;; In this lambda function, whatever evaluation comes after, treat it as a function.
+;; In practice...
+;; lambda creates function
+;;         ↓
+;; add-hook stores function
+;;         ↓
+;; event happens
+;;         ↓
+;; Emacs calls function
+;;         ↓
+;; lambda body executes
+#+end_src
+* Reload configuration
+Since we are tangling the configuration org --> el
+

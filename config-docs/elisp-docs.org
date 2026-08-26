@@ -1,0 +1,113 @@
+* Useful information for elisp
+** (...)
+A lisp form/expression
+The first element determines what expression is performed
+(+ 1 1 ) is evaluated to 1+1=2
+#+begin_src emacs-lisp :tangle no
+(add-to-list 'my-packages 'vertico)
+#+end_src
+Here 'my-packages means:
+"Give add-to-list the symbol my-packages, so it can modify the variable named by that symbol."
+While 'vertico means:
+"Put the symbol vertico into the list."
+#+begin_src emacs-lisp :tangle no
+  my-packages ; evaluates to (vertico)
+  'my-packages ; evaluates to my-packages
+  (my-packages) ; would look for a function called my-packages.
+#+end_src
+Parentheses mean "evaluate this as a form/call"; they don't mean "give me the value of this variable."
+** defvar
+Defines a variable.
+** setq
+Set the value of a variable
+** 'foo = (quote foo)
+Represents the symbol "foo" literally, without evaluating it.
+** defun
+Defines a function.
+** declare-function
+Tell emacs a function exist somewhere else.
+** push
+Add element to beginning of list.
+** add-to-list
+Same but only if not present.
+** pop
+Removes and returns the first element of a list.
+Useful for treating a list as a FILO/LIFO stack.
+** append
+Concatenates lists and returns a new list.
+
+** dolist (el1 el2)
+Iterates over the elements of a list (like a while/for loop).
+** cons
+Takes an element + a list returns new list with at element at front
+** (message "" options)
+Same as printf in C. Text set to echo area + **Messages** buffer.
+Sintax:
+- %s → string / printed representation
+- %d → integer
+- %f → floating-point number
+- %S → Lisp-readable representation
+  Examples:
+- (message "Name: %s, age: %d" "Mário" 42) --> "Name Mário, age: 42"
+  - (message "List: %S" '(foo bar baz)) --> "List: (foo bar baz)"
+** (if (CONDITION) (THEN-expression) [ELSE-expression] )
+Only 1 expression in THEN/ELSE
+#+begin_src emacs-lisp :tangle no
+    (if (> x 10) ; means "x > 10" in lisp code
+        (message "Big")
+      (message "Small"))
+#+end_src
+** progn increase number of THEN- or ELSE- expressions
+#+begin_src emacs-lisp :tangle no
+(if (> x 10)
+    (progn
+      (message "Big")
+      (setq x 10))
+  (message "Small"))
+#+end_src
+** (when (CONDITION) ((multiple) (expressions) (allowed)))
+This works for a if condition without an else
+#+begin_src emacs-lisp :tangle no
+(when (> x 10)
+  (message "Big")
+  (setq x 10))
+#+end_src
+** (unless (CONDITION) ((multiple) (expressions) (allowed))))
+Same as when but for (! CONDITION)
+#+begin_src emacs-lisp :tangle no
+(unless (> x 10)
+  (message "Small"))
+#+end_src
+** cond find first true condition = if, elseif, elseif, else.
+#+begin_src emacs-lisp :tangle no
+(cond
+ ((eq mode 'emacs) ...)
+ ((eq mode 'vim)   ...)
+ ((eq mode 'nano)  ...)
+ (t ...))  ;; <- should always end with a t (else condition)
+#+end_src
+** cl-case/cl-lib similar behaviour as switch
+#+begin_src emacs-lisp :tangle no
+(require 'cl-lib)
+
+(cl-case mode
+  (emacs (message "Emacs"))
+  (vim   (message "Vim"))
+  (t     (message "Other")))
+#+end_src
+** (and expr1 expr2 ... exprlast)
+returns exprlast if other exprN are not nil. If any nil stops evaluating.
+#+begin_src emacs-lisp :tangle no
+(and 1 2 3)        ; => 3
+(and 1 nil 3)      ; => nil
+(and nil 2 3)      ; => nil
+(and "hello" 42)   ; => 42
+#+end_src
+** (or expr1 expr2 ... exprN)
+return the first expression that is not nil without evaluating the remaining
+#+begin_src emacs-lisp :tangle no
+  (or nil 50 3) ; -> 50
+  (or nil nil 3) ; -> 3
+  (or nil nil nil) ; -> nil
+  (or nil "foo" 5) ; -> "foo"
+#+end_src

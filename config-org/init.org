@@ -1,0 +1,18 @@
+ #+title Initialization for emacs per module
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* Configuration file list
+#+begin_src emacs-lisp
+  (setq mj/config-files
+        '(package-loader
+  	tangle-babel
+  	ui-config))
+#+end_src
+
+* Load every configuration with early-init function
+#+begin_src emacs-lisp
+  (dolist (config mj/config-files)
+    (mj/load-config config))
+  
+#+end_src
