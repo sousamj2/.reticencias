@@ -22,10 +22,11 @@ Documentation on how to use each will be added to config-docs
 **  User interface packages
 #+begin_src emacs-lisp
   (defvar mj/list-package-ui
-    '(    nerd-icons  ; show icon fonts in the minibuffer depending on the file
-      all-the-icons-dired ; same as above but for dired-mode
+    '(doom-themes ; I am using the theme from doom-bluloco-dark/light
       doom-modeline ; show a "pretty" / configurable modeline
       ; possible alternatives: powerline / spaceline / make one myself
+      nerd-icons  ; show icon fonts in the minibuffer depending on the file
+      all-the-icons-dired ; same as above but for dired-mode
       which-key   ; Pressing a combination key that requires completion, show list of possibilities
       helpfull    ; Explains with more detail some of the describe functions
       command-log-mode ; show on the side the key combination used.

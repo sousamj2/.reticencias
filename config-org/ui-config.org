@@ -4,11 +4,30 @@
 
  This is where I will create the initial configuration of the emacs.
 
-* Basic UI configuration
+* Non-package related configuration
 ** Disable tool tips
 Don't remember what is this...
 #+begin_src emacs-lis
 (tooltip-mode -1)
+#+end_src
+** Show column number
+#+begin_src emacs-lisp
+(column-number-mode)
+#+end_src
+** Line highlight
+Works even better when using beam that double highlights the cursor line upon entering a buffer.
+#+begin_src emacs-lisp
+(when window-system (global-hl-line-mode t))
+#+end_src
+** Continuous scrolling
+At top and bottom it does not jump a "frame"
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 300)
+#+end_src
+** Add clock and used 24h system
+#+begin_src emacs-lisp
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
 #+end_src
 ** Save the cursor location
 Save location of the cursor when killing the buffer or closing emacs.
@@ -26,34 +45,9 @@ Add-hook to defines modes not to revert this.
   	   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
     #+end_src
-** Show column number
-#+begin_src emacs-lisp
-(column-number-mode)
-#+end_src
-** Add clock and used 24h system
-#+begin_src emacs-lisp
-  (setq display-time-24hr-format t)
-  (display-time-mode 1)
-#+end_src
 ** Using subWords
 #+begin_src emacs-lisp
 (global-subword-mode 1)
-#+end_src
-** No backup option (disable)
-This is to be replaced by a package that store these files away from the current directory.
-#+begin_src emacs-lisp
-;; (setq make-backup-file nil)
-;; (setq auto-save-default nil)
-#+end_src
-** Line highlight
-Works even better when using beam that double highlights the cursor line upon entering a buffer.
-#+begin_src emacs-lisp
-(when window-system (global-hl-line-mode t))
-#+end_src
-** Continuous scrolling
-At top and bottom it does not jump a "frame"
-#+begin_src emacs-lisp
-  (setq scroll-conservatively 300)
 #+end_src
 ** Parenthesis electrical
 #+begin_src emacs-lisp
@@ -67,3 +61,195 @@ At top and bottom it does not jump a "frame"
   (modify-syntax-entry ?> ".")
   (electric-pair-mode t) 
 #+end_src
+** Split buffers
+*** Vertical split
+#+begin_src emacs-lisp
+  (defun split-and-follow-vertically ()
+    (interactive)
+    (split-window-right)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
+#+end_src
+
+*** Horizontal split
+#+begin_src emacs-lisp
+  (defun split-and-follow-horizontally ()
+    (interactive)
+    (split-window-below)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 2") 'split-and-follow-horizontally)
+#+end_src
+** killall buffers
+#+begin_src emacs-lisp
+  (defun killall-buffers ()
+    (interactive)
+    (mapc 'kill-buffer (buffer-list)))
+  (global-set-key (kbd "C-M-s-k") 'killall-buffers)
+#+end_src
+** kill current buffer
+#+begin_src emacs-lisp
+  (defun kill-curr-buffer ()
+    (interactive)
+    (kill-buffer (current-buffer)))
+  (global-set-key (kbd "C-x k") 'kill-curr-buffer)
+#+end_src
+** enable buffers
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+#+end_src
+
+** expert mode
+#+begin_src emacs-lisp
+  (setq ibuffer-expert t)
+#+end_src
+
+* Doom-themes setup
+** Dark themes function
+#+begin_src emacs-lisp
+  (defun mj/dark-theme ()
+    "Load my dark theme."
+    (interactive)
+    (mapc #'disable-theme custom-enabled-themes)
+    (load-theme 'doom-bluloco-dark t)
+    (custom-theme-set-faces
+     'doom-bluloco-dark
+     '(default ((t (:background "#000000"))))))
+#+end_src
+** Light themes functions
+#+begin_src emacs-lisp
+  (defun mj/light-theme ()
+    "Load my light theme."
+    (interactive)
+    (mapc #'disable-theme custom-enabled-themes)
+    (load-theme 'doom-bluloco-light t))
+#+end_src
+** Choosing the dark themes to start emacs
+#+begin_src emacs-lisp
+  (use-package doom-themes) 
+  (mj/dark-theme) ; Start in the dark theme by default.
+
+#+end_src
+* Doom themes for the modeline
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :custom
+    ((doom-modeline-height 15)
+     (doom-modeline-icon t)
+     (doom-modeline-major-mode-icon t)
+     (doom-modeline-buffer-file-name-style 'truncate-upto-project))
+    )
+#+end_src
+** Add-on: count number of lines
+This allows to count how many lines does a function in C/C++ have.
+This might be also useful for python mode. To discover later.
+Placed here since the idea is to add this to the doom-modeline.
+#+begin_src emacs-lisp
+  (defun mj/c-function-line-count ()
+    "Return the current C function's line count."
+    (when (derived-mode-p 'c-mode 'c++-mode)
+      (save-excursion
+        (c-beginning-of-defun)
+        (let ((start (point)))
+          (c-end-of-defun)
+          (let ((end (point)))
+            (format " Func:%d/25"
+                    (- (count-lines start end) 3)))))))
+
+  (doom-modeline-def-segment mj/c-function-lines
+    (mj/c-function-line-count))
+
+
+  (doom-modeline-def-modeline 'mj/main
+    '(eldoc bar window-state workspace-name window-number modals matches
+            follow buffer-info remote-host buffer-position word-count
+            parrot selection-info)
+    '(compilation objed-state misc-info mj/c-function-lines
+                  project-name persp-name battery grip irc mu4e gnus github
+                  debug repl lsp minor-modes input-method indent-info
+                  buffer-encoding major-mode process vcs check time))
+
+  (doom-modeline-set-modeline 'mj/main)
+#+end_src
+* Icon fonts
+#+begin_src emacs-lisp
+  (use-package nerd-icons
+    :ensure t
+    :commands nerd-icons-install-fonts)
+
+  (use-package all-the-icons-dired
+    :if (display-graphic-p)
+    :hook (dired-mode . all-the-icons-dired-mode))
+
+  ;; This is an alternative icon version. I preferred the nerd-icons
+  ;; (use-package all-the-icons
+  ;;   :if (display-graphic-p)
+  ;;   :commands all-the-icons-install-fonts
+  ;;   :init
+  ;;   (unless (find-font (font-spec :name "all-the-icons"))
+  ;;     (all-the-icons-install-fonts t)))
+#+end_src
+* Which key
+Tells what are the next keys combinations
+#+begin_src emacs-lisp
+  (use-package which-key
+    :defer 0
+    :diminish which-key-mode
+    :config
+    (which-key-mode)
+    (setq which-key-idle-delay 2))
+
+#+end_src
+* Helpful
+Basically describes with more detail what each thing does.
+#+begin_src emacs-lisp
+  (use-package helpful
+    :commands (helpful-callable helpful-variable helpful-command helpful-key)
+    :ensure t
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
+
+#+end_src
+* command-log-mode
+
+#+begin_src emacs-lisp
+  (use-package command-log-mode
+    :commands command-log-mode
+    :config
+    (add-hook 'command-log-mode-hook
+              (lambda ()
+                (when command-log-mode
+                  (message "Command-log-mode enabled — use M-x clm/open-command-log-buffer to view it.")))))
+#+end_src
+
+* Beacon
+#+begin_src emacs-lisp
+  (use-package beacon
+    :ensure t
+    :init
+    (beacon-mode 1)) 
+#+end_src
+* Rainbow mode
+Shows parenthesis with matching colors
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+* hungry-delete
+#+begin_src emacs-lisp
+  (use-package hungry-delete
+    :ensure t
+    :config (global-hungry-delete-mode)
+      (define-key global-map (kbd "C-«") #'global-hungry-delete-mode)
+    )
+#+end_src
+*
