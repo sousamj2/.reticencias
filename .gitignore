@@ -1,0 +1,5 @@
+/config-el/*.el
+/eln-cache/
+/elpa/
+/places
+/.last-package-update-day
