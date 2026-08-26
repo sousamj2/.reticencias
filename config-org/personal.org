@@ -1,0 +1,68 @@
+ #+title Initialization of personal variables and global set keys.
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* [F3] Open terminal
+[F3] Recently switch from 'shell (my default for years) to ansi-term. Let's see how it goes...
+#+begin_src emacs-lisp
+  ;; (global-set-key [f3] 'shell)
+  (global-set-key [f3] 'ansi-term)
+#+end_src
+
+* [F4] Go to line
+All the "known" way to go to line do not work so I am using this one:
+#+begin_src emacs-lisp
+  (global-set-key [f4] 'goto-line)
+#+end_src
+
+* [F5] Find and replace
+#+begin_src emacs-lisp
+  (global-set-key [f5] 'query-replace)
+#+end_src
+
+* [F6] and [F7] kill and yank rectangle
+#+begin_src emacs-lisp
+  (global-set-key [f6] "\M-x kill-rectangle")
+  (global-set-key [f7] "\M-x yank-rectangle")
+#+end_src
+* Visual-line-mode
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<C-f2>") 'visual-line-mode)
+#+end_src
+* [F8] and [F9] for comment and uncomment
+#+begin_src emacs-lisp
+  (global-set-key [f8] 'comment-region)
+  (global-set-key [f9] 'uncomment-region)
+#+end_src
+
+* Compile
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<s-return>") 'compile)
+#+end_src
+* TODO [F12] Close any Latex enviroment
+Maybe there is a way to remove "Latex" and really close any enviroment. To be checked.
+#+begin_src emacs-lisp
+  (global-set-key [f12] 'LaTeX-close-environment)
+#+end_src
+
+* "M-n" Hiiiiiiipie expand
+This is probably something I do even more than go-to-line
+M-n breaks with company. Attemped map with C-q (closer with the pinky-emacs check) and M-q (further apart)
+#+begin_src emacs-lisp
+  ;; (global-set-key "M-n" 'hippie-expand)
+  (keymap-global-set "C-q" #'hippie-expand)
+  (keymap-global-set "M-q" #'hippie-expand)
+#+end_src
+
+* S-<mouse-2> paste in cursor
+#+begin_src emacs-lisp
+  (defun my-paste-primary-at-point ()
+    (interactive)
+    (insert (gui-get-selection 'PRIMARY)))
+
+  (global-set-key (kbd "S-<mouse-2>") #'my-paste-primary-at-point)
+#+end_src
+* Whitespace-mode
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<C-f3>") 'whitespace-mode)
+#+end_src
