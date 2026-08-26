@@ -9,13 +9,13 @@
 #+begin_src emacs-lisp
   ; points to the org sub directory in the --init-directory
   (setq mj/config-org-directory
-        (expand-file-name "conf-org/" user-emacs-directory))
+        (expand-file-name "config-org/" user-emacs-directory))
 #+end_src
 ***  Set el configuration directories
 #+begin_src emacs-lisp
   ; points to the el sub directory in the --init-directory
   (setq mj/config-el-directory
-        (expand-file-name "conf-el/" user-emacs-directory))
+        (expand-file-name "config-el/" user-emacs-directory))
 #+end_src
 * Declare functions
 *** Tangle function name automatic change
@@ -75,43 +75,48 @@
         (load-file early-el))
       (when (file-exists-p init-el)
         (load-file init-el))))
-  (with-eval-after-load 'org
-    (bind-key "C-c r" #'mj/config-reload))
+  ;; (with-eval-after-load 'org
+  ;;   (bind-key "C-c r" #'mj/config-reload))
 #+end_src
 * Add hook for org-mode
 Execute my org-babel-tangle when the file is the a conf-org-file.
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda ()
-            (when (mj/config-org-file-p)
-              (add-hook 'after-save-hook
-                        #'mj/org-babel-tangle-config
-                        nil
-                        t))))
+  (with-eval-after-load 'org
+    (bind-key "C-c r" #'mj/config-reload)
+    
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (when (mj/config-org-file-p)
+  		(add-hook 'after-save-hook
+                            #'mj/org-babel-tangle-config
+                            nil
+                            t)))))
 
-;; (add-hook HOOK FUNCTION &optional DEPTH LOCAL)
-;; HOOK is the hook name:
-;; Whenever this happens (start org-mode, after saving the file), execute the
-;; FUNCTION that needs to be run with a
-;; DEPTH priority in the list of functions running the hook and only run in the
-;; LOCAL (current) buffer if t or globally if nil.
-;; DEPTH and LOCAL are &optional parameters in the function with the default value of nil.
-;; In general all &optional parameters have a nil value but can be explicitly set inside the function:
-;; (setq b (or b 42))
-;; Sets the value to either the value provided in the argument if not nil or to 42.
+  ;; (add-hook HOOK FUNCTION &optional DEPTH LOCAL)
+  ;; HOOK is the hook name:
+  ;; Whenever this happens (start org-mode, after saving the file), execute the
+  ;; FUNCTION that needs to be run with a
+  ;; DEPTH priority in the list of functions running the hook and only run in the
+  ;; LOCAL (current) buffer if t or globally if nil.
+  ;; DEPTH and LOCAL are &optional parameters in the function with the default value of nil.
+  ;; In general all &optional parameters have a nil value but can be explicitly set inside the function:
+  ;; (setq b (or b 42))
+  ;; Sets the value to either the value provided in the argument if not nil or to 42.
 
-;; In this lambda function, whatever evaluation comes after, treat it as a function.
-;; In practice...
-;; lambda creates function
-;;         ↓
-;; add-hook stores function
-;;         ↓
-;; event happens
-;;         ↓
-;; Emacs calls function
-;;         ↓
-;; lambda body executes
+  ;; In this lambda function, whatever evaluation comes after, treat it as a function.
+  ;; In practice...
+  ;; lambda creates function
+  ;;         ↓
+  ;; add-hook stores function
+  ;;         ↓
+  ;; event happens
+  ;;         ↓
+  ;; Emacs calls function
+  ;;         ↓
+  ;; lambda body executes
 #+end_src
 * Reload configuration
 Since we are tangling the configuration org --> el
-
+* test
+ 
+ 
