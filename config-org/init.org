@@ -2,6 +2,7 @@
  #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
  #+Author Mario Sousa
 
+ 
 * Configuration file list
 #+begin_src emacs-lisp
   (setq mj/config-files
@@ -9,6 +10,7 @@
   	tangle-babel
   	ui-config
   	completions
+  	org-config
   	
   	personal))
 #+end_src

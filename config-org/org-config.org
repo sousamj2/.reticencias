@@ -1,0 +1,86 @@
+ #+title Initialization for emacs per module
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* Minimum set of org config
+** Org-tempo
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (require 'org-tempo)
+
+    (setq org-src-window-setup 'current-window)
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python"))
+    (add-to-list 'org-structure-template-alist '("cc" . "src C"))
+    (add-to-list 'org-structure-template-alist '("cp" . "src cpp"))
+    (add-to-list 'org-structure-template-alist '("cfu" . "src conf-unix")))
+#+end_src
+** Setup functions
+#+begin_src emacs-lisp
+  (defun mj/org-mode-setup ()
+    (message "Calling my org setup")
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
+
+  (defun mj/org-font-setup ()
+    (dolist (face '((org-level-1 . 1.3)
+  		  (org-level-2 . 1.1)
+  		  (org-level-3 . 1.05)
+  		  (org-level-4 . 1.0)
+  		  (org-level-5 . 1.0)
+  		  (org-level-6 . 1.0)
+  		  (org-level-7 . 1.0)
+  		  (org-level-8 . 1.0)))
+      (set-face-attribute (car face) nil :font "Cantarell" :height (cdr face)))
+    
+    ;; Replace list hyphen with dot
+    (font-lock-add-keywords 'org-mode
+                            '(("^ *\\([-]\\) "
+                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))))
+#+end_src
+** Start configuration
+#+begin_src emacs-lisp
+  (use-package org
+    :pin org
+    :hook (org-mode . mj/org-mode-setup))
+#+end_src
+
+** Other something
+#+begin_src emacs-lisp
+  (defun mj/org-mode-visual-fill () 
+    (setq visual-fill-column-width 120
+  	visual-fill-column-center-text t)
+    (visual-fill-column-mode 1 ))
+
+  (use-package visual-fill-column
+    :hook (org-mode . mj/org-mode-visual-fill))
+#+end_src
+** Org bullets
+Gets better looking bullets
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode)
+    ;; :custom
+    ;; (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
+    )
+#+end_src
+* Setup winum with treemacs
+#+begin_src emacs-lisp
+  (use-package winum
+    :ensure
+    :config
+    (global-set-key (kbd "M-0") 'treemacs-select-window)
+    (global-set-key (kbd "M-1") 'winum-select-window-1)
+    (global-set-key (kbd "M-2") 'winum-select-window-2)
+    (global-set-key (kbd "M-3") 'winum-select-window-3)
+    (global-set-key (kbd "M-4") 'winum-select-window-4)
+    (global-set-key (kbd "M-5") 'winum-select-window-5)
+    (global-set-key (kbd "M-6") 'winum-select-window-6)
+    (global-set-key (kbd "M-7") 'winum-select-window-7)
+    (global-set-key (kbd "M-8") 'winum-select-window-8)
+    (winum-mode))
+#+end_src
+* 
+
