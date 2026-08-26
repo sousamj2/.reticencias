@@ -8,10 +8,11 @@ Documentation on how to use each will be added to config-docs
 #+begin_src emacs-lisp
   (defvar mj/list-package-completion
     '(vertico     ; Auto completion menu with better layout alternative to ivy
-      orderless   ; matching
-      marginalia  ; annotations
-      consult     ; advance search / navigation
-      embark      ; contextual actions
+      orderless   ; matching. Improves searching across completions.
+      savehist    ; saving the list of the last used files (remove prescient?)
+      marginalia  ; annotations: extra information (like ivy-rich)
+      consult     ; advance search / navigation / additional completions (like counsel)
+      embark      ; contextual actions. Provides actions for the current selection in vertico completion lists.
       prescient   ; Order the menus with order of recent and frequent use items.
       company     ; Alternative to vertico, specially for coding completion
       yasnippet   ; Allows the definition of snippets
@@ -19,7 +20,7 @@ Documentation on how to use each will be added to config-docs
       company-prescient ; using prescient in company
   ))
 #+end_src
-**  User interface packages
+** User interface packages
 #+begin_src emacs-lisp
   (defvar mj/list-package-ui
     '(doom-themes ; I am using the theme from doom-bluloco-dark/light
