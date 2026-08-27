@@ -11,9 +11,9 @@
   	ui-config
   	completions
   	org-config
-  	
   	general
   	dired
+  	dashboard
   	personal))
 #+end_src
 
