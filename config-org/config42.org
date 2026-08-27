@@ -1,0 +1,141 @@
+ #+title Initialization for emacs per module
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* Compilation with cc and warning flags
+I might revert this to the make command instead in the near future.
+#+begin_src emacs-lisp
+  ;(setq-default compile-command "cc -Wall -Wextra -Werror ft* && ./a.out")
+#+end_src
+* Add hook to tab C programs with the equivalent to 4 spaces.
+#+begin_src emacs-lisp
+  (add-hook 'c-mode-hook
+      	  (lambda()
+              (setq-local indent-tabs-mode t)
+              (setq-local tab-width 4)
+              (setq-local c-basic-offset 4)
+    	    (doom-modeline-set-modeline 'mj/main)))
+  (add-hook 'c++-mode-hook
+  	  (lambda()
+  	    (doom-modeline-set-modeline 'mj/main)))
+#+end_src
+* Style the C with bsd
+Makes bracket not to be indented: need check effect of using 'linux' instead of 'bsd'.
+#+begin_src emacs-lisp
+  (setq c-default-style '((c-mode . "bsd")
+                          (c++-mode . "bsd")
+      			(other . "gnu")))
+#+end_src
+* Tell where to stop the tab: steps of 4 up to 120.
+#+begin_src emacs-lisp
+  ( setq-default tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60
+    				 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
+  (setq-default indent-tabs-mode t)
+#+end_src
+* Add 42 logo to project to pass the norminette.
+#+begin_src emacs-lisp
+  (defvar mj/42-loaded nil)
+
+  (defun mj/load-42 ()
+    "Load my 42 emacs extensions once."
+    (unless mj/42-loaded
+      (load (expand-file-name "el42/list.el" user-emacs-directory))
+      (load (expand-file-name "el42/string.el" user-emacs-directory))
+      (load (expand-file-name "el42/comments.el" user-emacs-directory))
+      (load (expand-file-name "el42/header.el" user-emacs-directory))
+      
+      (global-set-key (kbd "<C-f1>") 'header-insert)
+      (setq mj/42-loaded t)))
+
+  (add-hook 'c-mode-hook #'mj/load-42)
+  (add-hook 'c++-mode-hook #'mj/load-42)
+#+end_src
+* Process tabs in function and variable declaration.
+#+begin_src emacs-lisp
+  (defcustom mj/c-types
+    '("void"
+      "char"
+      "int"
+      "float"
+      "double"
+      "long")
+    "C types recognized by `mj/c-align-42'."
+    :type '(repeat string)
+    :group 'c)
+
+  (defun mj/c-align-42 ()
+    "Align C declarations according to the 42 style."
+    (interactive)
+    (when (derived-mode-p 'c-mode 'c++-mode)
+      (let* ((extra-types
+              (when current-prefix-arg
+                (let ((input
+                       (read-string
+                        "Additional types (space separated): ")))
+                  (split-string input "[ \t,]+" t))))
+             (types (append extra-types mj/c-types))
+             (type-regexp (regexp-opt types 'words)))
+
+        (save-excursion
+
+          (if (c-defun-name)
+
+              ;; Function definition.
+              (progn
+                (c-beginning-of-defun)
+
+                ;; Return type -> TAB -> function name.
+                (when (looking-at
+                       (concat "^\\s-*"
+                               type-regexp
+                               "\\s-+"))
+                  (goto-char (match-end 0))
+                  (delete-horizontal-space)
+                  (insert "\t"))
+
+                ;; Find opening brace.
+                (when (re-search-forward "{" nil t)
+                  (forward-line 1)
+
+                  ;; Process declarations until blank line.
+                  (while (and (not (eobp))
+                              (not (looking-at-p "^\\s-*$")))
+
+                    (beginning-of-line)
+
+                    (when (looking-at
+                           (concat "^\\s-*"
+                                   type-regexp
+                                   "\\s-+"))
+
+                      ;; Remember the type itself.
+                      (let ((type (match-string-no-properties 0)))
+
+                        ;; Normalize indentation.
+                        (unless (looking-at "^\t")
+                          (delete-horizontal-space)
+                          (insert "\t"))
+
+                        ;; Find the type again, now that indentation
+                        ;; has been normalized.
+                        (when (looking-at
+                               (concat "^\t"
+                                       type-regexp
+                                       "\\s-+"))
+                          (goto-char (match-end 0))
+                          (delete-horizontal-space)
+                          (insert "\t"))))
+
+                    (forward-line 1))))
+
+            ;; Function prototype.
+            (beginning-of-line)
+
+            (when (looking-at
+                   (concat "^\\s-*"
+                           type-regexp
+                           "\\s-+"))
+              (goto-char (match-end 0))
+              (delete-horizontal-space)
+              (insert "\t")))))))
+#+end_src

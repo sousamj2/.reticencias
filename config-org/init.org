@@ -17,6 +17,7 @@
   	dashboard
   	autosave
   	projects
+  	config42
   	ui-config
   	))
 #+end_src
