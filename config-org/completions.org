@@ -70,6 +70,37 @@ Searching without using a specific order ffile can see also find-file
   :ensure t
   :after (embark consult))
 #+end_src
-** yasnippets
-** Company
+* yasnippets
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :defer t
+    :hook (prog-mode . yas-minor-mode)
+    :custom
+    (yas-snippet-dirs '("~/.config/emacs/default/snippets/"))
+    (message "yasnippet: setup with my snippets.")
+    :config
+    ;; Don't let yas grab TAB: shift-tab expands the stippets + next
+    ;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
+    ;; (define-key yas-minor-mode-map (kbd "TAB") nil)
+    ;; (define-key yas-minor-mode-map
+    ;;   	      (kbd "<backtab>")  yas-maybe-expand)
+    ;; (message "yasnippet: removed \"TAB\" and <tab> from starting snippets: Using <backtab>.")
+    ;; (define-key yas-keymap [(tab)] nil)
+    ;; (define-key yas-keymap (kbd "TAB") nil)
+    ;; (message "yasnippet: removed [(tab)] and \"TAB\" from iterating snippets options.")
+    ;; (define-key yas-keymap
+    ;;             (kbd "<tab>")
+    ;;             (yas-filtered-definition
+    ;;              'yas-next-field-or-maybe-expand))
+    ;; (define-key yas-keymap
+    ;;   	      (kbd "<backtab>")
+    ;;   	      (yas-filtered-definition
+    ;;   	       'yas-prev-field))
+    ;; (message "yasnippet: iterating with snippets: <tab>/<backtab> for next/prev, respectively.")
+    (yas-global-mode 1)
+    (message "yasnippet: finishing loading."))
+#+end_src
+* Company
 *** Special configuration if needed.
+
