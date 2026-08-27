@@ -29,7 +29,7 @@ Documentation on how to use each will be added to config-docs
       nerd-icons  ; show icon fonts in the minibuffer depending on the file
       all-the-icons-dired ; same as above but for dired-mode
       which-key   ; Pressing a combination key that requires completion, show list of possibilities
-      helpfull    ; Explains with more detail some of the describe functions
+      helpful     ; Explains with more detail some of the describe functions
       command-log-mode ; show on the side the key combination used.
       beacon      ; when changing buffers, a "beacon" highlights the cursor line
       rainbow-delimiters ; delimiters ((), [], etc) are colorized to better see corresponding start-end. Very useful for elisp.
@@ -58,8 +58,8 @@ Documentation on how to use each will be added to config-docs
 #+begin_src emacs-lisp
   (defvar mj/list-package-org
     '(; org              ; major mode to edit org file (too many option to list)
-      ; org package is part of default instalation: only need to configure it.
-      org-tempo        ; set of snippets that allows to open src blocks
+      ; org/-tempo package is part of default instalation: only need to configure it.
+      ; org-tempo        ; set of snippets that allows to open src blocks
       org-bullets      ; gets better looking headers / bullets.
       visual-fill-column ; display a mode in a centred mode (removing side space).
       ))
