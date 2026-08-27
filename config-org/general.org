@@ -1,0 +1,113 @@
+ #+title Initialization for emacs per module
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+ 
+* Hydra
+Allows for faster repeated actions. 
+#+begin_src emacs-lisp
+    (use-package hydra
+      :defer t)
+#+end_src
+* Personal menus CTRL+TAB
+** hydra setup for scale in/out
+#+begin_src emacs-lisp
+  (defhydra hydra-text-scale (:timeout 4)
+    "scale text"
+    ("k" text-scale-increase "in")
+    ("j" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
+#+end_src
+** mj/keys [t]oggles
+- toogle hydra scale text [s]
+- choose theme [t]
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (general-create-definer mj/keys
+      :prefix "C-<tab>"
+      :global-prefix "C-<tab>")
+
+    (mj/keys
+     "t" '(:ignore t :which-key "toggles"))
+
+    (general-define-key
+     :keymaps 'override
+     :prefix "C-<tab> t"
+     "s" '(hydra-text-scale/body :which-key "scale text")
+     "t" '(counsel-load-theme :which-key "choose theme")
+     "d" '(mj/dark-theme :which-key "dark theme")
+     "l" '(mj/light-theme :which-key "light theme")
+     ))
+#+end_src
+** More to come
+* Terminals
+** Close terminal buffer on exit config
+#+begin_src emacs-lisp
+  (defvar my-term-shell "/bin/bash")
+
+  (defun my-ansi-term-exit (process event)
+    (when (memq (process-status process) '(exit signal))
+      (let ((buffer (process-buffer process)))
+        (when (buffer-live-p buffer)
+          (kill-buffer buffer)))))
+
+  (defun my-ansi-term-setup ()
+    (let ((process (get-buffer-process (current-buffer))))
+      (when process
+        (set-process-sentinel process #'my-ansi-term-exit))))
+
+  (add-hook 'term-exec-hook #'my-ansi-term-setup)
+  #+end_src
+** ansi-terminal
+Using ansi-terminal
+#+begin_src emacs-lisp
+  (defadvice ansi-term (before force-bash)
+    (interactive (list my-term-shell)))
+  (ad-activate 'ansi-term)
+#+end_src
+* Macros
+** Remap Macros s-[F3] and s-[F4]
+#+begin_src emacs-lisp
+  ;; (global-set-key [f3] 'shell)
+  (global-set-key (kbd "<s-f3>") 'start-kbd-macro)
+  (global-set-key (kbd "<s-f4>") 'end-kbd-macro)
+#+end_src
+
+** Increment numbers
+Starting a macro with S-[F2] will create a counter at a place where you press again S-[F2]
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<s-f2>") 'kmacro-start-macro-or-insert-counter)
+#+end_src
+
+** Macro definition
+S-[f3]
+define macro
+S-[f4]
+
+** Execute macro
+*** Run once
+C-x e
+*** Run again
+e (just press 'e')
+*** Run 'eternal'
+C-u 0 C-x e
+
+** Save macro
+To be used after defining macro
+*** Run 
+M-x name-last-kbd-macro
+_Name:_ my-macro [enter]
+*** Recover saved macro (use it as a function)
+M-x my-macro
+Closing emacs, the macro will disapear unless...
+*** Save macro 'eternal'
+M-x insert-kbd-macro
+_Name:_ my-macro [enter]
+
+This will give the text to add to emacs-lisp:
+(fset 'my-macro
+[ LIST OF COMMANDS USED TO CREATE MACRO]
+)
+This binds the macro for future sessions	     
+
