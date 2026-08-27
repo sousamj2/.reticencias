@@ -21,12 +21,13 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(all-the-icons-dired auto-package-update beacon command-log-mode
-			 company-prescient consult-projectile dap-mode
-			 dashboard dired-hide-dotfiles dired-open
-			 doom-modeline doom-themes embark
-			 embark-consult general helpful hungry-delete
-			 lsp-ui magit marginalia orderless org-bullets
-			 org-tempo python-mode rainbow-delimiters
+			 company-box company-prescient
+			 consult-projectile dap-mode dashboard
+			 dired-hide-dotfiles dired-open doom-modeline
+			 doom-themes embark-consult general helpful
+			 hungry-delete lsp-ui magit marginalia
+			 orderless org-bullets python-mode
+			 rainbow-delimiters treemacs-projectile
 			 vertico-prescient visual-fill-column winum
 			 yasnippet)))
 (custom-set-faces

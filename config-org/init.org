@@ -8,13 +8,15 @@
   (setq mj/config-files
         '(package-loader
   	personal
-  	tangle-babel
-  	completions
   	org-config
+  	tangle-babel
+  	lsp-conf
+  	completions
   	general
   	dired
   	dashboard
   	autosave
+  	projects
   	ui-config
   	))
 #+end_src
