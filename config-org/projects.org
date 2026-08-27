@@ -1,0 +1,93 @@
+ #+title Initialization for emacs per module
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* Projectile package "CTRL+c p"
+** Ignore directories
+#+begin_src emacs-lisp
+  (setq list-of-directories
+              '(".git"
+        "__pycache__"
+        ".pytest_cache"
+        ".venv"
+        "venv"
+        "build"
+        "CMakeFiles"
+        "dist"
+        "bin") )
+#+end_src
+
+** Ignore extensions
+#+begin_src emacs-lisp
+  (setq list-of-extensions
+        '(".o" ; object files
+        ".a" ; static libraries
+        ".so" ; dinamic libraries
+        ".pyc" ; python compilation
+        ".pyo" ; python objects
+        ".class" ; C++ classes
+        ))
+#+end_src
+** emacs saves
+#+begin_src emacs-lisp
+  (setq list-emacs-saves
+     '("~$" ; emacs backup saves
+        "#.*#$" ; emacs auto saves
+        ))
+#+end_src
+
+** Projectile configuration
+Allows to search within our projects (mine are within ~/work/ folder)
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :custom
+    ((projectile-completion-system 'vertico)
+     (projectile-globally-ignored-directories list-of-directories)
+     (projectile-globally-ignored-file-suffixes list-of-extensions)
+     (projectile-global-ignore-file-patterns list-emacs-saves))
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    ;(when (file-directory-p "~/work/")
+    (setq projectile-project-search-path '("~/work/" "~/.config/emacs/"))
+;      (setq projectile-project-search-path '("~/.config/emacs/"))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+#+end_src
+
+**  treemacs integration
+#+begin_src emacs-lisp
+  (use-package treemacs-projectile
+    :after (treemacs projectile))
+#+end_src
+
+* magit
+#+begin_src emacs-lisp
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function
+   #'magit-display-buffer-same-window-except-diff-v1)
+  :bind
+  (("C-c g g" . magit-status)
+   ("C-c g b" . magit-blame)))
+#+end_src
+* Setup winum with treemacs
+#+begin_src emacs-lisp
+  (use-package winum
+    :ensure
+    :config
+    (global-set-key (kbd "M-0") 'treemacs-select-window)
+    (global-set-key (kbd "M-1") 'winum-select-window-1)
+    (global-set-key (kbd "M-2") 'winum-select-window-2)
+    (global-set-key (kbd "M-3") 'winum-select-window-3)
+    (global-set-key (kbd "M-4") 'winum-select-window-4)
+    (global-set-key (kbd "M-5") 'winum-select-window-5)
+    (global-set-key (kbd "M-6") 'winum-select-window-6)
+    (global-set-key (kbd "M-7") 'winum-select-window-7)
+    (global-set-key (kbd "M-8") 'winum-select-window-8)
+    (winum-mode))
+#+end_src
+
