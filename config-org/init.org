@@ -7,14 +7,16 @@
 #+begin_src emacs-lisp
   (setq mj/config-files
         '(package-loader
+  	personal
   	tangle-babel
-  	ui-config
   	completions
   	org-config
   	general
   	dired
   	dashboard
-  	personal))
+  	autosave
+  	ui-config
+  	))
 #+end_src
 
 * Load every configuration with early-init function

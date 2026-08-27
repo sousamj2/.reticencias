@@ -3,7 +3,6 @@
  #+Author Mario Sousa
 
  Mostly this information was retrieved from system crafters youtube.
- 
 * No backup option (disable)
 #+begin_src emacs-lisp
 ;; (setq make-backup-file nil)
@@ -11,7 +10,6 @@
 #+end_src
 * Backup files
 Place backup file in the "/temp" directory instead of placing next to the file (".").
-
 #+begin_src emacs-lisp
   (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 #+end_src

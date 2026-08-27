@@ -75,8 +75,6 @@
         (load-file early-el))
       (when (file-exists-p init-el)
         (load-file init-el))))
-  ;; (with-eval-after-load 'org
-  ;;   (bind-key "C-c r" #'mj/config-reload))
 #+end_src
 * Add hook for org-mode
 Execute my org-babel-tangle when the file is the a conf-org-file.
