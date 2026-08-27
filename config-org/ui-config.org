@@ -2,7 +2,7 @@
  #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
  #+Author Mario Sousa
 
- This is where I will create the initial configuration of the emacs.
+ This is where I will create the initial user interface configuration of the emacs.
 
 * Non-package related configuration
 ** Disable tool tips
@@ -125,11 +125,36 @@ Add-hook to defines modes not to revert this.
     (mapc #'disable-theme custom-enabled-themes)
     (load-theme 'doom-bluloco-light t))
 #+end_src
-** Choosing the dark themes to start emacs
+** Theme at startup
+*** Using time-based theme
 #+begin_src emacs-lisp
-  (use-package doom-themes) 
-  (mj/dark-theme) ; Start in the dark theme by default.
-
+  (defun mj/theme-at-startup-time ()
+    "Load a the  me based on the time of day."
+    (let ((hour (string-to-number (format-time-string "%H"))))
+      (if (or (>= hour 19)
+              (< hour 7))
+          (mj/dark-theme)
+        (mj/light-theme)))) 
+#+end_src
+*** With system-based theme
+#+begin_src emacs-lisp
+(defun mj/theme-at-startup-system ()
+  "Load my theme acc       ording to the GNOME color scheme."
+  (let ((scheme (string-trim
+                 (shell-command-to-string
+                  "gsettings get org.gnome.desktop.interface color-scheme"))))
+    (cond
+     ((string= scheme "'prefer-dark'")
+      (mj/dark-theme))
+     ((string= scheme "'default'")
+      (mj/light-theme)))))
+#+end_src
+** Choosing the start themes to emacs
+#+begin_src emacs-lisp
+    (use-package doom-themes) 
+  ;  (mj/dark-theme) ; Start in the dark theme by default.
+   (mj/theme-at-startup-time) ; Initial theme depending on the time of day.
+; (mj/theme-at-startup-system) ; Initial theme depending on the system theme.
 #+end_src
 * Doom themes for the modeline
 #+begin_src emacs-lisp
