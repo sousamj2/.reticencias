@@ -60,7 +60,7 @@ Searching without using a specific order ffile can see also find-file
 (use-package embark
   :ensure t
   :bind
-  (("C-." . embark-act)
+  (("C-," . embark-act)
    ("C-;" . embark-dwim)
    ("C-h B" . embark-bindings)))
 #+end_src

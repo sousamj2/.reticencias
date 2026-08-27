@@ -12,6 +12,7 @@
   	completions
   	org-config
   	
+  	dired
   	personal))
 #+end_src
 
