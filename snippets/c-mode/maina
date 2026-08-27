@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: maina: C main function with arguments
+# key: maina
+# contributor : sargedas
+# --
+int main(int argc, char *argv[])
+{
+    if (argc < ${1:2})
+    {
+	printf("Not enough args to execute %s.\n",argv[0]);
+	return (-1);
+    }
+    $0
+
+    return (0);
+}

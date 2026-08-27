@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: mainv: C main function without arguments
+# key: mainv
+# contributor : sargedas
+# --
+int main(void)
+{
+    printf("Main with no args.\n");
+    $0
+
+    return (0);
+}

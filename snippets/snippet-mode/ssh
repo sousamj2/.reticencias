@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Set Snippet Header
+# contributor : sargedas
+# key: ssh
+# --
+# -*- mode: snippet -*-
+# name: $1
+# key: ${2:trigger-key}
+# contributor : ${3:sargedas}
+# --
+$0
