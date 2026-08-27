@@ -12,7 +12,8 @@
 * [F4] Go to line
 All the "known" way to go to line do not work so I am using this one:
 #+begin_src emacs-lisp
-  (global-set-key [f4] 'goto-line)
+  ;; (global-set-key [f4] 'goto-line)
+  (global-set-key [f4] 'consult-goto-line)
 #+end_src
 
 * [F5] Find and replace
