@@ -157,6 +157,7 @@ Add-hook to defines modes not to revert this.
 ; (mj/theme-at-startup-system) ; Initial theme depending on the system theme.
 #+end_src
 * Doom themes for the modeline
+** Modeline default config
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :ensure t
