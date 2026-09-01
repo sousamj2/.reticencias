@@ -176,7 +176,7 @@ Thanks to the helper functions above, creating the context per mail acccount is 
             (,mu4e-drafts-folder . ?d)
             (,mu4e-sent-folder   . ?s)
             (,mu4e-refile-folder . ?a)
-            (,mu4e-trash-folder  . ?t)))))
+            (,mu4e-trash-folder  . ?t))))))
     
   (add-hook 'mu4e-context-changed-hook
            #'mj/update-mu4e-shortcuts)
