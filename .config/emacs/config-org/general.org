@@ -25,15 +25,15 @@ Allows for faster repeated actions.
   (use-package general
     :config
     (general-create-definer mj/keys
-      :prefix "C-<tab>"
-      :global-prefix "C-<tab>")
+      :prefix "M-ł"
+      :global-prefix "M-ł")
 
     (mj/keys
      "t" '(:ignore t :which-key "toggles"))
 
     (general-define-key
      :keymaps 'override
-     :prefix "C-<tab> t"
+     :prefix "M-ł"
      "s" '(hydra-text-scale/body :which-key "scale text")
      "t" '(counsel-load-theme :which-key "choose theme")
      "d" '(mj/dark-theme :which-key "dark theme")
