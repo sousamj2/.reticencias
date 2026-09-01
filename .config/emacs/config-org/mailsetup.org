@@ -1,0 +1,188 @@
+ #+title Initialization for mail setup in emacs
+ #+PROPERTY: header-args: emacs-lisp : tangle yes :mkdir yes
+ #+Author Mario Sousa
+
+* Initial setup
+** Load mu4e
+#+begin_src emacs-lisp
+  ;;; -*- lexical-binding: t; -*-
+
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+  (require 'mu4e)
+
+  (use-package mu4e
+    :ensure nil
+    :defer (* 60 60)
+    :config
+    (mu4e t)
+    )
+#+end_src
+
+** Authentication information
+#+begin_src emacs-lisp
+    (require 'auth-source)
+    (require 'auth-source-pass)
+
+    (auth-source-pass-enable)
+
+  ; use this in case you need to debug
+  ; (setq smtpmail-debug-info t)
+#+end_src
+** Syncronization setup
+*** Automatic update: every 2 h until the setup is finish:
+#+begin_src emacs-lisp
+  (setq mu4e-maildir "~/.Mail/" ; use your favorite location.
+        mu4e-get-mail-command "mbsync -a" ; command to sync the emails in all accounts.
+        mu4e-update-interval (* 2 60 60) ; sync the email every 10 (*60=300) minutes.
+        mu4e-change-filenames-when-moving t) ; avoid mail syncing issues when using mbsync
+#+end_src
+
+*** Manual sync
+#+begin_src emacs-lisp
+  (defun mj/mu4e-update-mail-and-index (&optional run-in-background)
+    "Update mail for the current context, or all accounts if no context is active."
+    (interactive "P")
+    (let ((mu4e-get-mail-command
+  	 (if-let ((context (mu4e-context-current)))
+  	     (format "mbsync %s"
+  		     (substring (mu4e-context-name context) 1)) ; (mu4e-context-name context))
+  	   "mbsync -a")))
+      (mu4e-update-mail-and-index run-in-background)))
+
+  (with-eval-after-load 'mu4e
+    (define-key mu4e-main-mode-map (kbd "U")
+                #'mj/mu4e-update-mail-and-index))
+#+end_src
+* Some multi-account useful functions
+** Private email files variable
+In this function, you can add safely your emails without the risk of exposure. An private/example_emails.cvs is provided.
+#+begin_src emacs-lisp
+(defvar mj/emails-file
+  (expand-file-name "private/emails.csv" user-emacs-directory)
+  "Private email account configuration.")
+#+end_src
+** Function to read file
+This function reads all the files in the csv file provided above.
+#+begin_src emacs-lisp
+(defun mj/read-emails-csv ()
+  "Read email accounts from `mj/emails-file'."
+  (when (file-exists-p mj/emails-file)
+    (with-temp-buffer
+      (insert-file-contents mj/emails-file)
+      (let ((lines (split-string (buffer-string) "\n" t))) ; get each line
+        (mapcar
+         (lambda (line)
+           (split-string line "," t)) ; get each parameter
+         (cdr lines))))))
+#+end_src
+** text here
+#+begin_src emacs-lisp
+(defvar mj/email-accounts
+  (mj/read-emails-csv)
+  "Email accounts read from the private email configuration.")
+#+end_src
+** Function to create account
+This function will take all the information of one line and fill out all the parameters required
+#+begin_src emacs-lisp
+  (defun mj/make-mu4e-context (account)
+    "Create a mu4e context from ACCOUNT."
+
+    (pcase-let
+        ((`(,context-name
+            ,_pass-dir
+            ,user-email
+            ,user-name
+            ,smtp-server
+            ,smtp-port
+            ,smtp-type
+            ,sent
+            ,drafts
+            ,bin
+            ,refile)
+          account))
+
+      (make-mu4e-context
+       :name context-name
+
+       :match-func
+       (lambda (msg)
+         (when msg
+           (string-prefix-p
+            (concat "/" context-name)
+            (mu4e-message-field msg :maildir))))
+
+       :vars
+       `((user-mail-address . ,user-email)
+         (user-full-name . ,user-name)
+
+         (mu4e-sent-folder . ,sent)
+         (mu4e-drafts-folder . ,drafts)
+         (mu4e-trash-folder . ,bin)
+         (mu4e-refile-folder . ,refile)
+
+         (mu4e-sent-messages-behavior . delete)
+
+         (smtpmail-smtp-server . ,smtp-server)
+         (smtpmail-smtp-service . ,(string-to-number smtp-port))
+         (smtpmail-stream-type . ,(intern smtp-type))
+         (smtpmail-smtp-user . ,user-email)
+         (smtpmail-auth-supported . (login))))))
+#+end_src
+
+** Setup context for all accounts
+Thanks to the helper functions above, creating the context per mail acccount is as simple as calling them.
+#+begin_src emacs-lisp
+  (setq mu4e-contexts
+        (mapcar #'mj/make-mu4e-context
+  		(mj/read-emails-csv)))
+#+end_src
+
+** Add shortcuts for using in mu4e
+#+begin_src emacs-lisp
+    (defun mj/update-mu4e-shortcuts ()
+      "Update maildir shortcuts for the current mu4e context."
+      (let ((context (mu4e-context-current)))
+        (when context
+    	(let ((prefix (concat "/" (substring (mu4e-context-name context) 1))))
+            (setq mu4e-maildir-shortcuts
+                  `((,(concat prefix "/INBOX") . ?i)
+                    (,(concat prefix mu4e-drafts-folder) . ?d)
+                    (,(concat prefix mu4e-sent-folder)   . ?s)
+                    (,(concat prefix mu4e-refile-folder) . ?a)
+                    (,(concat prefix mu4e-trash-folder)  . ?t)))))))
+
+    (add-hook 'mu4e-context-changed-hook
+             #'mj/update-mu4e-shortcuts)
+#+end_src
+
+*** Default to principal email
+#+begin_src emacs-lisp
+;  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-context-policy nil)
+  (setq mu4e-context-current
+        (mu4e-context-switch nil "1gmail-mj"))
+#+end_src
+
+* SMTP configuration
+** Using built-in package to send email
+#+begin_src emacs-lisp
+   (require 'smtpmail)
+   (setq send-mail-function 'smtpmail-send-it)
+#+end_src
+** Get the smtpmail authorization
+This is just to retrieve the list of smtp servers that we are going to use to send emails.
+Without duplication (multiple gmails, etc) we just replace . with \\. in the server name.
+#+begin_src emacs-lisp
+;  Index 4 of the csv is the smtp server name
+  (defconst mj/email-smtp-server-index 4)
+
+  (setq smtpmail-servers-requiring-authorization
+      (mapconcat
+       #'regexp-quote
+       (delete-dups
+        (mapcar
+         (lambda (account)
+           (nth mj/email-smtp-server-index account))
+         mj/email-accounts))
+       "\\|"))
+#+end_src
