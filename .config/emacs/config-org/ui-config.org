@@ -17,7 +17,8 @@ Don't remember what is this...
 ** Line highlight
 Works even better when using beam that double highlights the cursor line upon entering a buffer.
 #+begin_src emacs-lisp
-(when window-system (global-hl-line-mode t))
+  ;(when window-system (global-hl-line-mode t))
+  (global-hl-line-mode t)
 #+end_src
 ** Continuous scrolling
 At top and bottom it does not jump a "frame"
@@ -204,6 +205,7 @@ Placed here since the idea is to add this to the doom-modeline.
 #+begin_src emacs-lisp
   (use-package nerd-icons
     :ensure t
+    :if (display-graphic-p)
     :commands nerd-icons-install-fonts)
 
   (use-package all-the-icons-dired

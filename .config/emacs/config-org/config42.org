@@ -9,6 +9,7 @@ I might revert this to the make command instead in the near future.
 #+end_src
 * Add hook to tab C programs with the equivalent to 4 spaces.
 #+begin_src emacs-lisp
+  (when (display-graphic-p)
   (add-hook 'c-mode-hook
       	  (lambda()
               (setq-local indent-tabs-mode t)
@@ -18,6 +19,7 @@ I might revert this to the make command instead in the near future.
   (add-hook 'c++-mode-hook
   	  (lambda()
   	    (doom-modeline-set-modeline 'mj/main)))
+  )
 #+end_src
 * Style the C with bsd
 Makes bracket not to be indented: need check effect of using 'linux' instead of 'bsd'.

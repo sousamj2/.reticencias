@@ -20,8 +20,11 @@
     :config
     (dashboard-setup-startup-hook)
         (setq dashboard-startup-banner
-          (expand-file-name "images/livEmacs.png"
-                            user-emacs-directory))
+  	    (cons
+  	     (expand-file-name "images/livEmacs.png"
+                                 user-emacs-directory)
+  	     (expand-file-name "images/livEmacs.txt"
+                                 user-emacs-directory)))
     (setq dashboard-items '((recents . 5)))
     (setq dashboard-banner-logo-title "Welcome to my livEmacs!")
     )
