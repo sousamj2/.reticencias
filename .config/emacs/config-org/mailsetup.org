@@ -84,6 +84,15 @@ This function reads all the files in the csv file provided above.
 ** Function to create account
 This function will take all the information of one line and fill out all the parameters required
 #+begin_src emacs-lisp
+  (defun mj/mu4e-account-folder (account folder)
+    "Return FOLDER prefixed with ACCOUNT's Maildir."
+    (concat "/"
+            account
+            (if (string-prefix-p "/" folder)
+                folder
+              (concat "/" folder))))
+
+
   (defun mj/make-mu4e-context (account)
     "Create a mu4e context from ACCOUNT."
 
@@ -101,32 +110,38 @@ This function will take all the information of one line and fill out all the par
             ,refile)
           account))
 
-      (make-mu4e-context
-       :name context-name
+      (let ((maildir-name (substring context-name 1)))
 
-       :match-func
-       (lambda (msg)
-         (when msg
-           (string-prefix-p
-            (concat "/" context-name)
-            (mu4e-message-field msg :maildir))))
+        (make-mu4e-context
+         :name context-name
 
-       :vars
-       `((user-mail-address . ,user-email)
-         (user-full-name . ,user-name)
+         :match-func
+         (lambda (msg)
+           (when msg
+             (string-prefix-p
+              (concat "/" maildir-name)
+              (mu4e-message-field msg :maildir))))
 
-         (mu4e-sent-folder . ,sent)
-         (mu4e-drafts-folder . ,drafts)
-         (mu4e-trash-folder . ,bin)
-         (mu4e-refile-folder . ,refile)
+         :vars
+         `((user-mail-address . ,user-email)
+           (user-full-name . ,user-name)
 
-         (mu4e-sent-messages-behavior . delete)
+           (mu4e-sent-folder
+            . ,(mj/mu4e-account-folder maildir-name sent))
+           (mu4e-drafts-folder
+            . ,(mj/mu4e-account-folder maildir-name drafts))
+           (mu4e-trash-folder
+            . ,(mj/mu4e-account-folder maildir-name bin))
+           (mu4e-refile-folder
+            . ,(mj/mu4e-account-folder maildir-name refile))
 
-         (smtpmail-smtp-server . ,smtp-server)
-         (smtpmail-smtp-service . ,(string-to-number smtp-port))
-         (smtpmail-stream-type . ,(intern smtp-type))
-         (smtpmail-smtp-user . ,user-email)
-         (smtpmail-auth-supported . (login))))))
+           (mu4e-sent-messages-behavior . delete)
+
+           (smtpmail-smtp-server . ,smtp-server)
+           (smtpmail-smtp-service . ,(string-to-number smtp-port))
+           (smtpmail-stream-type . ,(intern smtp-type))
+           (smtpmail-smtp-user . ,user-email)
+           (smtpmail-auth-supported . (login)))))))
 #+end_src
 
 ** Setup context for all accounts
@@ -137,30 +152,35 @@ Thanks to the helper functions above, creating the context per mail acccount is 
   		(mj/read-emails-csv)))
 #+end_src
 
-** Add shortcuts for using in mu4e
+** Default to principal email
 #+begin_src emacs-lisp
-    (defun mj/update-mu4e-shortcuts ()
-      "Update maildir shortcuts for the current mu4e context."
-      (let ((context (mu4e-context-current)))
-        (when context
-    	(let ((prefix (concat "/" (substring (mu4e-context-name context) 1))))
-            (setq mu4e-maildir-shortcuts
-                  `((,(concat prefix "/INBOX") . ?i)
-                    (,(concat prefix mu4e-drafts-folder) . ?d)
-                    (,(concat prefix mu4e-sent-folder)   . ?s)
-                    (,(concat prefix mu4e-refile-folder) . ?a)
-                    (,(concat prefix mu4e-trash-folder)  . ?t)))))))
-
-    (add-hook 'mu4e-context-changed-hook
-             #'mj/update-mu4e-shortcuts)
-#+end_src
-
-*** Default to principal email
-#+begin_src emacs-lisp
-;  (setq mu4e-context-policy 'pick-first)
-  (setq mu4e-context-policy nil)
+     (setq mu4e-context-policy 'pick-first)
+   ;t    (setq mu4e-context-policy nil)
   (setq mu4e-context-current
         (mu4e-context-switch nil "1gmail-mj"))
+#+end_src
+
+** Add shortcuts for using in mu4e
+#+begin_src emacs-lisp
+  (defun mj/update-mu4e-shortcuts ()
+    "Update maildir shortcuts for the current mu4e context."
+    (let ((context (mu4e-context-current)))
+      (when context
+  (setq mu4e-maildir-shortcuts
+          `((,(concat "/"
+                      (substring
+                       (mu4e-context-name
+                        (mu4e-context-current))
+                       1)
+                      "/INBOX") . ?i)
+            (,mu4e-drafts-folder . ?d)
+            (,mu4e-sent-folder   . ?s)
+            (,mu4e-refile-folder . ?a)
+            (,mu4e-trash-folder  . ?t)))))
+    
+  (add-hook 'mu4e-context-changed-hook
+           #'mj/update-mu4e-shortcuts)
+
 #+end_src
 
 * SMTP configuration
