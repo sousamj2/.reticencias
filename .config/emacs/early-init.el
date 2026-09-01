@@ -9,7 +9,7 @@
           (concat "config-org/" (symbol-name name) ".org")
           user-emacs-directory)))
     (if (file-exists-p config-el)
-	(load-file config-el)
+	(load config-el nil 'nomessage)
       (let ((buffer (find-file-noselect config-org)))
 	(unwind-protect
             (with-current-buffer buffer
