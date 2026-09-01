@@ -19,6 +19,7 @@
   	projects
   	config42
   	ui-config
+  	mailsetup
   	))
 #+end_src
 
