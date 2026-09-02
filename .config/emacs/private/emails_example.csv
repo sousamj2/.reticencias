@@ -1,0 +1,6 @@
+context_name,pass_dir,user_email,user_name,smtp_server,smtp_port,smtp_type,sent,drafts,bin,refile
+1gmail-01,mail/gmail-01,1gmail.01@gmail.com,My Name,smtp.gmail.com,587,starttls,/[Gmail]/Sent Mail,/[Gmail]/Drafts,/[Gmail]/Bin,/[Gmail]/All Mail
+2gmail-02,mail/gmail-02,2gmail.02@gmail.com,My Name,smtp.gmail.com,587,starttls,/[Gmail]/Sent Mail,/[Gmail]/Drafts,/[Gmail]/Bin,/[Gmail]/All Mail
+3gmail-03,mail/gmail-03,3gmail.03@gmail.com,My Name,smtp.gmail.com,587,starttls,/[Gmail]/Sent Mail,/[Gmail]/Drafts,/[Gmail]/Bin,/[Gmail]/All Mail
+4yahoo-01,mail/yahoo-01,1yahoo.01@yahoo.com,My Name,smtp.mail.yahoo.com,587,starttls,/Sent Mail,/Drafts,/Trash,/Archive
+5yahoo-02,mail/yahoo-02,2yahoo.02@yahoo.com,My Name,smtp.mail.yahoo.com,587,starttls,/Sent Mail,/Drafts,/Trash,/Archive
