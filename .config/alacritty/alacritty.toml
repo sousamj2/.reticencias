@@ -1,0 +1,28 @@
+[font]
+size = 16.0
+
+[general]
+import = ["/home/sargedas/.config/alacritty/tango_dark.toml"]
+
+[window]
+opacity = 0.9
+startup_mode = "Fullscreen"
+
+[window.dimensions]
+columns = 100
+lines = 25
+
+[window.padding]
+x = 6
+y = 6
+
+[[keyboard.bindings]]
+action = "ToggleFullscreen"
+key = "F11"
+mods = "None"
+
+[terminal]
+
+[terminal.shell]
+program = "/bin/bash"
+args = ["-c", "tmux new-session -A -s main; exec bash"]

@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+DAEMON_SESSION="emacs-daemon"
+MAIN_SESSION="main"
+
+# Create the daemon session only if it doesn't already exist.
+if ! tmux has-session -t "$DAEMON_SESSION" 2>/dev/null; then
+    tmux new-session -d -s "$DAEMON_SESSION" "emacs --daemon"
+fi
+
+# Attach to (or create) the main session.
+tmux new-session -A -s "$MAIN_SESSION"
