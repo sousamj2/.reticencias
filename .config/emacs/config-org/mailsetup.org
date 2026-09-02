@@ -33,7 +33,8 @@
 #+begin_src emacs-lisp
   (setq mu4e-maildir "~/.Mail/" ; use your favorite location.
         mu4e-get-mail-command "mbsync -a" ; command to sync the emails in all accounts.
-        mu4e-update-interval (* 2 60 60) ; sync the email every 10 (*60=300) minutes.
+        mu4e-update-interval (* 15 60) ; sync the email every 15 (*60=450) minutes.
+        ;; mu4e-update-interval (* 2 60 60) ; sync the email every 2 (*60*60=7200) hours.
         mu4e-change-filenames-when-moving t) ; avoid mail syncing issues when using mbsync
 #+end_src
 
@@ -44,14 +45,13 @@
     (interactive "P")
     (let ((mu4e-get-mail-command
   	 (if-let ((context (mu4e-context-current)))
-  	     (format "mbsync %s"
-  		     (substring (mu4e-context-name context) 1)) ; (mu4e-context-name context))
+  	     (format "mbsync %s" (substring (mu4e-context-name context) 1))
   	   "mbsync -a")))
       (mu4e-update-mail-and-index run-in-background)))
 
-  (with-eval-after-load 'mu4e
-    (define-key mu4e-main-mode-map (kbd "U")
-                #'mj/mu4e-update-mail-and-index))
+  ;; (with-eval-after-load 'mu4e
+  ;;   (define-key mu4e-main-mode-map (kbd "U")
+  ;;               #'mj/mu4e-update-mail-and-index))
 #+end_src
 * Some multi-account useful functions
 ** Private email files variable
@@ -75,7 +75,7 @@ This function reads all the files in the csv file provided above.
            (split-string line "," t)) ; get each parameter
          (cdr lines))))))
 #+end_src
-** text here
+** Define variable to hold the email accounts
 #+begin_src emacs-lisp
 (defvar mj/email-accounts
   (mj/read-emails-csv)
@@ -166,7 +166,8 @@ Thanks to the helper functions above, creating the context per mail acccount is 
     "Update maildir shortcuts for the current mu4e context."
     (let ((context (mu4e-context-current)))
       (when context
-  (setq mu4e-maildir-shortcuts
+
+        (setq mu4e-maildir-shortcuts
           `((,(concat "/"
                       (substring
                        (mu4e-context-name
@@ -180,6 +181,8 @@ Thanks to the helper functions above, creating the context per mail acccount is 
     
   (add-hook 'mu4e-context-changed-hook
            #'mj/update-mu4e-shortcuts)
+
+  (mj/update-mu4e-shortcuts)
 
 #+end_src
 
