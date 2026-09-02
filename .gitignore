@@ -13,3 +13,16 @@
 /recentf
 /tmp/
 /var/
+/.config/emacs/.last-package-update-day
+/.config/emacs/config-el/
+/.config/emacs/eln-cache/
+/.config/emacs/elpa/
+/.config/emacs/history
+/.config/emacs/network-security.data
+/.config/emacs/places
+/.config/emacs/projectile-bookmarks.eld
+/.config/emacs/projectile-frecency.eld
+/.config/emacs/recentf
+/.config/emacs/tmp/
+/.config/emacs/transient/
+/.config/emacs/private/emails.csv
