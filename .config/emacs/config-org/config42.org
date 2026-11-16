@@ -18,7 +18,10 @@ I might revert this to the make command instead in the near future.
     	    (doom-modeline-set-modeline 'mj/main)))
   (add-hook 'c++-mode-hook
   	  (lambda()
-  	    (doom-modeline-set-modeline 'mj/main)))
+             (setq-local indent-tabs-mode t)
+              (setq-local tab-width 4)
+              (setq-local c-basic-offset 4)
+   	    (doom-modeline-set-modeline 'mj/main)))
   )
 #+end_src
 * Style the C with bsd
