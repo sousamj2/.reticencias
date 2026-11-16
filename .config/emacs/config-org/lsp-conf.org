@@ -99,3 +99,7 @@ This is not the compiler clang. In fact I will be using gcc instead for compilat
   :init
   (company-prescient-mode 1))
 #+end_src
+* GDB debug mode
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.gdb\\'" . sh-mode))
+#+end_src
