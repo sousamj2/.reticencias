@@ -23,8 +23,8 @@ All the "known" way to go to line do not work so I am using this one:
 
 * [F6] and [F7] kill and yank rectangle
 #+begin_src emacs-lisp
-  (global-set-key [f6] "\M-x kill-rectangle")
-  (global-set-key [f7] "\M-x yank-rectangle")
+  (global-set-key [f6] 'kill-rectangle)
+  (global-set-key [f7] 'yank-rectangle)
 #+end_src
 * Visual-line-mode
 #+begin_src emacs-lisp
