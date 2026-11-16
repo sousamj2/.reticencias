@@ -5,20 +5,22 @@
  This is where I will create the initial configuration of the emacs.
 
 * Set variables
-*** Set org configuration directories
+** Set org configuration directories
 #+begin_src emacs-lisp
   ; points to the org sub directory in the --init-directory
   (setq mj/config-org-directory
-        (expand-file-name "config-org/" user-emacs-directory))
+        (file-truename
+         (expand-file-name "config-org/" user-emacs-directory)))
 #+end_src
-***  Set el configuration directories
+**  Set el configuration directories
 #+begin_src emacs-lisp
   ; points to the el sub directory in the --init-directory
   (setq mj/config-el-directory
-        (expand-file-name "config-el/" user-emacs-directory))
+        (file-truename
+         (expand-file-name "config-el/" user-emacs-directory)))
 #+end_src
 * Declare functions
-*** Tangle function name automatic change
+** Tangle function name automatic change
 #+begin_src emacs-lisp
 (defun mj/org-tangle-target ()
   "Return the .el target corresponding to the current config Org file."
@@ -28,7 +30,7 @@
     (file-name-nondirectory buffer-file-name))
    ".el"))
 #+end_src
-*** Function to see if the current file if a conf-org file
+** Function to see if the current file if a conf-org file
 #+begin_src emacs-lisp
   (defun mj/config-org-file-p ()
     "Return not-nil if the current buffer is one from my conf-org files."
@@ -47,7 +49,7 @@
   ;; function and return t if buffer-file-name, mj/config-org-directory and string-equal all return t
   ;; function mj/config-org-file-p return the result from and function
 #+end_src
-*** Function to tangle (save to the el counterpart) the org file.
+** Function to tangle (save to the el counterpart) the org file.
 #+begin_src emacs-lisp
   (defun mj/org-babel-tangle-config ()
     "Tangle the current config Org file after saving it."
@@ -63,7 +65,7 @@
   ;; TARGET = conf-el/foo.el
   ;; LANG   = emacs-lisp
 #+end_src
-*** Function that will reload the configuration
+** Function that will reload the configuration
 #+begin_src emacs-lisp
   (defun mj/config-reload ()
     (interactive)
