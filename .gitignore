@@ -26,3 +26,11 @@
 /.config/emacs/tmp/
 /.config/emacs/transient/
 /.config/emacs/private/emails.csv
+/.config/emacs/.cache/
+/.config/emacs/.lsp-session-v1
+/.config/emacs/backup/
+/.config/emacs/places.eld
+/.config/emacs/recentf.eld
+/.config/emacs/snippets/c-mode/mainp
+/.config/emacs/tramp
+/.nvidia-settings-rc
