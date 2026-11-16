@@ -1,3 +1,8 @@
+
+;; Suppress missing lexical-binding warnings from third-party files.
+(add-to-list 'warning-suppress-types
+             '(files missing-lexbind-cookie))
+
 (defun mj/load-config (name)
   "Load configuration NAME, tangling its Org source if necessary."
   (let ((config-el
