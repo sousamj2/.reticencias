@@ -54,16 +54,25 @@ Makes bracket not to be indented: need check effect of using 'linux' instead of 
 
   (add-hook 'c-mode-hook #'mj/load-42)
   (add-hook 'c++-mode-hook #'mj/load-42)
+  (add-hook 'python-mode-hook #'mj/load-42)
+  (add-hook 'makefile-mode-hook #'mj/load-42)
 #+end_src
 * Process tabs in function and variable declaration.
 #+begin_src emacs-lisp
   (defcustom mj/c-types
     '("void"
       "char"
+      "unsigned char"
       "int"
+      "unsigned int"
       "float"
       "double"
-      "long")
+      "long"
+      "size_t"
+      "ssize_t"
+      "t_gnl"
+      "t_list"
+      "long long")
     "C types recognized by `mj/c-align-42'."
     :type '(repeat string)
     :group 'c)
