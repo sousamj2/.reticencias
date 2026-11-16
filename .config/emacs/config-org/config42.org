@@ -56,6 +56,7 @@ Makes bracket not to be indented: need check effect of using 'linux' instead of 
   (add-hook 'c++-mode-hook #'mj/load-42)
   (add-hook 'python-mode-hook #'mj/load-42)
   (add-hook 'makefile-mode-hook #'mj/load-42)
+  (add-hook 'sh-mode-hook #'mj/load-42)
 #+end_src
 * Process tabs in function and variable declaration.
 #+begin_src emacs-lisp
