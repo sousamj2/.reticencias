@@ -49,9 +49,9 @@
   	   "mbsync -a")))
       (mu4e-update-mail-and-index run-in-background)))
 
-  ;; (with-eval-after-load 'mu4e
-  ;;   (define-key mu4e-main-mode-map (kbd "U")
-  ;;               #'mj/mu4e-update-mail-and-index))
+  (with-eval-after-load 'mu4e
+    (define-key mu4e-main-mode-map (kbd "M-U")
+                #'mj/mu4e-update-mail-and-index))
 #+end_src
 * Some multi-account useful functions
 ** Private email files variable
